@@ -47,23 +47,8 @@ public class FutuRiftControllerScript : MonoBehaviour
     }
     void Update()
     {
-        // Пример обновления углов наклона и крена на основе ввода пользователя
-        // Это может быть заменено логикой вашего проекта
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            controller.Pitch += 1;
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            controller.Pitch -= 1;
-        }
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            controller.Roll -= 1;
-        }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            controller.Roll += 1;
-        }
+        var euler = transform.eulerAngles;
+        controller.Pitch = (euler.x > 180 ? euler.x - 360 : euler.x);
+        controller.Roll = (euler.z > 180 ? euler.z - 360 : euler.z);
     }
 }
