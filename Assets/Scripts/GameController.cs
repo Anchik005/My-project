@@ -6,10 +6,9 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
     [SerializeField] private GameObject[] _offGameObjects;
-    [SerializeField] private GameObject _droneModel;
     private CinemachineDollyCart _CDC;
     private bool _played = false;
-
+    public bool _gameStarted = false;
     [SerializeField] private Material _sphereMaterial;
 
     public void Awake()
@@ -37,17 +36,14 @@ public class GameController : MonoBehaviour
         {
             gObject.SetActive(false);
         }
-
-        _droneModel.SetActive(true);
-
+        
+        _gameStarted = true;
         _CDC.m_Speed = 3.0f;
     }
 
     public void EndGame()
     {
         _sphereMaterial.color = Color.black;
-        _droneModel.SetActive(false);
-
         _played = true;
     }
 }

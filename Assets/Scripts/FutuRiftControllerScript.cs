@@ -1,54 +1,47 @@
-﻿using UnityEngine;
-using ChairControl.ChairWork;
-using ChairControl.ChairWork.Options;
+﻿using Futurift;
+using Futurift.DataSenders;
+using Futurift.Options;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class FutuRiftControllerScript : MonoBehaviour
 {
-    private FutuRiftController controller;
+    private FutuRiftController _controller;
+
+    private GameController _gameC;
     // Настройки для UDP-соединения
     public string ipAddress = "127.0.0.1";
     public int ports = 6065;
-    // Настройки для углов
-    public float initialPitch = 0.0f;
-    public float initialRoll = 0.0f;
-    // Настройки интервала передачи данных
-    public int interval = 100;
-    void Start()
+
+    private void Awake()
     {
-        // Создаем экземпляр UdpOptions
-        var udpOptions = new UdpOptions
+        _gameC = GetComponent<GameController>();
+        var udpOptions = new UdpOptions()
         {
             ip = ipAddress,
             port = ports
         };
-        // Создаем экземпляр FutuRiftOptions
-        var futuRiftOptions = new FutuRiftOptions
-        {
-            interval = interval
-        };
-        // Создаем экземпляр FutuRiftController
-        controller = new FutuRiftController(
-            udpOptions: udpOptions,
-            futuRiftOptions: futuRiftOptions
-        );
-        // Настраиваем начальные значения углов
-        controller.Pitch = initialPitch;
-        controller.Roll = initialRoll;
-        // Запускаем контроллер
-        controller.Start();
+
+        _controller = new FutuRiftController(new UdpPortSender(udpOptions));
     }
+
+    private void OnEnable()
+    {
+        _controller?.Start();
+    }
+
     void OnDisable()
     {
-        // Останавливаем контроллер, когда скрипт отключается
-        if (controller != null)
-        {
-            controller.Stop();
-        }
+        _controller?.Stop();
     }
+
     void Update()
     {
-        var euler = transform.eulerAngles;
-        controller.Pitch = (euler.x > 180 ? euler.x - 360 : euler.x);
-        controller.Roll = (euler.z > 180 ? euler.z - 360 : euler.z);
+        if (_gameC._gameStarted)
+        {
+            var euler = transform.eulerAngles;
+            _controller.Pitch = (euler.x > 180 ? euler.x - 360 : euler.x);
+            _controller.Roll = (euler.z > 180 ? euler.z - 360 : euler.z);
+        }
     }
 }
